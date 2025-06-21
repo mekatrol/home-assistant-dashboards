@@ -22,7 +22,7 @@ const router = createRouter({
     {
       path: '/:pathMatch(.*)*', // Final catch-all route
       name: ROUTE_NOT_FOUND_VIEW,
-      component: IndexView
+      redirect: { name: ROUTE_INDEX_VIEW }
     }
   ]
 });
