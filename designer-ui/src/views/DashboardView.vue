@@ -1,13 +1,23 @@
 <template>
   <main>
-    <pre>{{ homeAssistantEntities }}</pre>
+    <DashboardLayout :name="dashboardName" />
   </main>
 </template>
 
 <script setup lang="ts">
-import { storeToRefs } from 'pinia';
-import { useAppStore } from '@/stores/app-store';
+import { computed } from 'vue';
+import { useRouteHelper } from '@/composables/route-helper';
+import { ROUTE_DASHBOARD_VIEW } from '@/router';
+import DashboardLayout from '@/components/DashboardLayout.vue';
 
-const appStore = useAppStore();
-const { homeAssistantEntities } = storeToRefs(appStore);
+const dashboardName = computed(() => {
+  const parts = useRouteHelper().urlPathParts();
+
+  // This must be a dashboard view
+  if (parts.lenth < 2 || parts[0] != ROUTE_DASHBOARD_VIEW) {
+    return '';
+  }
+
+  return parts[1];
+});
 </script>
