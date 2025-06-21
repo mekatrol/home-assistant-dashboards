@@ -1,7 +1,8 @@
- # controller/auth_controller.py
+# controller/auth_controller.py
 
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import get_jwt, get_jwt_identity, jwt_required, current_user
+from services.configuration_service import ConfigurationService
 from services.container_registry import get_container
 
 from constants.messages import (
@@ -19,6 +20,16 @@ from services.user_service import (
 )
 
 auth_bp = Blueprint("auth", __name__)
+
+
+@auth_bp.get("/long-lived-token")
+def get_long_lived_token():
+    container = get_container()
+    config_service: ConfigurationService = container.get(ConfigurationService)
+
+    return jsonify({
+        "token": config_service["home_assistant_token"]
+    })
 
 
 @auth_bp.post("/register")

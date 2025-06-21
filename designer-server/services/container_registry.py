@@ -1,6 +1,7 @@
 # api/container_registry.py
 
-from wireup import create_sync_container, AsyncContainer
+from wireup import create_sync_container, SyncContainer
+from services.configuration_service import ConfigurationService
 from services.user_service import UserService, UserTokenService
 from services.data_service import DataService
 from services.user_mapper_service import UserMapperService
@@ -8,10 +9,10 @@ from services.dashboard_service import DashboardService
 
 
 # Services container global singleton
-_container: AsyncContainer | None = None
+_container: SyncContainer | None = None
 
 
-def create_container(config: dict) -> AsyncContainer:
+def create_container(config: dict) -> SyncContainer:
     global _container
 
     _container = create_sync_container(
@@ -20,8 +21,9 @@ def create_container(config: dict) -> AsyncContainer:
             UserTokenService,
             DataService,
             UserMapperService,
-            DashboardService])
-    
+            DashboardService,
+            ConfigurationService])
+
     return _container
 
 

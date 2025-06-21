@@ -1,6 +1,7 @@
 app:
   lock_file: ./instance/app.lock
-  jwt_key: ff08fca37e192d092fce59a2dc1ec9ce638db7fc4b972fc4
+  home_assistant_token: replace text with home assistant long lived token here
+  jwt_key: ff08fca37e192d092fce59a2dc1ec9ce638db7fc4b972fc4  
   jwt_access_token_expiry_mins: 10
   jwt_refresh_token_expiry_mins: 1440
   data_files:

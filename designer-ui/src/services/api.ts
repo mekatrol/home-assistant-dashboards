@@ -3,6 +3,7 @@ import { axiosApi } from './axios';
 import { ref } from 'vue';
 import { showErrorMessage } from './message';
 import { useAppStore } from '@/stores/app-store';
+import type { HomeAssistantToken } from './authService';
 
 /**
  * Maps to the ErrorModel class in the API
@@ -364,5 +365,22 @@ export const httpDelete = async (url: string, apiErrorCallback?: ApiErrorCallbac
       // Flag call is no longer busy waiting
       appStore.decrementBusy();
     }
+  }
+};
+
+export const getHomeAssistantToken = async (errorHandlerCallback?: ApiErrorCallback): Promise<string | undefined> => {
+  try {
+    const appStore = useAppStore();
+    const token = await httpGet<HomeAssistantToken>('/auth/long-lived-token', errorHandlerCallback);
+
+    appStore.setHomeAssistantToken(token);
+
+    return token.token;
+  } catch {
+    // Clear current token info
+    const appStore = useAppStore();
+    appStore.setHomeAssistantToken(undefined);
+
+    return undefined;
   }
 };

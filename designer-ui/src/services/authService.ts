@@ -8,6 +8,10 @@ export const LOGIN_URL = '/auth/login';
 export const LOGOUT_URL = '/auth/logout';
 export const USER_URL = '/auth/user';
 
+export interface HomeAssistantToken {
+  token: string;
+}
+
 export interface RefreshedToken {
   accessToken: string;
   accessTokenExpiry: string;

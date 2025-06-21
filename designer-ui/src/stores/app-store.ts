@@ -1,8 +1,9 @@
 import { computed, ref } from 'vue';
 import { defineStore } from 'pinia';
 import { clearMessage, type MessageData } from '@/services/message';
-import type { AccessToken, User } from '@/services/authService';
+import type { AccessToken, HomeAssistantToken, User } from '@/services/authService';
 import { useLocalSessionJsonObject } from '@/composables/local-session';
+import { type HassEntities } from 'home-assistant-js-websocket';
 
 export const TOKEN_SESSION_KEY = 'token-session-key';
 
@@ -12,6 +13,8 @@ export const useAppStore = defineStore('app', () => {
   const serverOnline = ref(false);
   const userToken = ref<AccessToken | undefined>(undefined);
   const user = ref<User | undefined>(undefined);
+  const homeAssistantToken = ref<HomeAssistantToken | undefined>(undefined);
+  const homeAssistantEntities = ref<HassEntities | undefined>(undefined);
 
   const isBusy = computed(() => isBusyCount.value > 0);
 
@@ -47,6 +50,14 @@ export const useAppStore = defineStore('app', () => {
     }
   };
 
+  const setHomeAssistantToken = (token: HomeAssistantToken | undefined): void => {
+    homeAssistantToken.value = token;
+  };
+
+  const setHomeAssistantEntities = (entities: HassEntities | undefined): void => {
+    homeAssistantEntities.value = entities;
+  };
+
   return {
     messageData,
     closeMessageOverlay,
@@ -60,6 +71,11 @@ export const useAppStore = defineStore('app', () => {
 
     user,
     userToken,
-    setUserToken
+    homeAssistantToken,
+    setUserToken,
+    setHomeAssistantToken,
+
+    homeAssistantEntities,
+    setHomeAssistantEntities
   };
 });

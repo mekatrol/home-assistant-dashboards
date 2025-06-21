@@ -17,7 +17,7 @@ import { onBeforeUnmount, onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useAppStore } from '@/stores/app-store';
 import { RouterView } from 'vue-router';
-import { closeWebSocket, useServerUpdateWebSocket } from './services/web-socket';
+import { homeAssistantConnect, homeAssistantClose } from './services/home-assistant';
 
 import BusyOverlay from '@/components/BusyOverlay.vue';
 import MessageOverlay from '@/components/MessageOverlay.vue';
@@ -25,12 +25,16 @@ import MessageOverlay from '@/components/MessageOverlay.vue';
 const appStore = useAppStore();
 const { messageData, isBusy } = storeToRefs(appStore);
 
-onMounted(() => {
-  // Make sure websockets active
-  useServerUpdateWebSocket();
+onMounted(async () => {
+  // Make sure home assistant websocket active
+  try {
+    await homeAssistantConnect();
+  } catch (err: unknown) {
+    console.error(err);
+  }
 });
 
 onBeforeUnmount(() => {
-  closeWebSocket();
+  homeAssistantClose();
 });
 </script>

@@ -2,7 +2,7 @@ import yaml
 from flask_jwt_extended import JWTManager
 from flask import Flask, jsonify
 from flask_cors import CORS
-from pyaml_env import parse_config
+from config.config_helper import load_yaml_config
 from constants.messages import ACCESS_TOKEN_EXPIRED, ACCESS_TOKEN_EXPIRED, ACCESS_TOKEN_INVALID, ACCESS_TOKEN_MISSING, ACCESS_TOKEN_REVOKED
 from controllers.auth_controller import auth_bp
 from controllers.user_controller import user_bp
@@ -15,7 +15,8 @@ from services.container_registry import create_container
 
 def create_app():
     # Initialise configuration and DI
-    all_config = parse_config("config/config.yaml", loader=yaml.Loader)
+    all_config = load_yaml_config(
+        "config/config.yaml", "config/config.local.yaml")
 
     # Create services container singleton
     container = create_container(all_config["app"])
