@@ -1,0 +1,2 @@
+SECURITY_ROLE_ADMIN = "admin"
+SECURITY_ROLE_USER = "user"

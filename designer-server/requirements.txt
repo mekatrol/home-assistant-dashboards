@@ -1,0 +1,11 @@
+flask
+flask-jwt-extended
+flask-cors
+pysondb
+bcrypt
+pydantic
+wireup
+pyyaml
+pyaml-env
+filelock
+waitress

@@ -1,0 +1,71 @@
+POST http://127.0.0.1:5000/auth/register
+Content-Type: application/json
+
+{
+  "userName": "test",
+  "password": "test_password"
+}
+
+###
+
+POST http://127.0.0.1:5000/auth/login
+Content-Type: application/json
+
+{
+  "userName": "test",
+  "password": "test_password"
+}
+
+###
+
+POST http://127.0.0.1:5000/auth/login
+Content-Type: application/json
+
+{
+  "userName": "admin",
+  "password": "nimda"
+}
+
+###
+
+POST http://docker2.lan:5000/auth/login
+Content-Type: application/json
+
+{
+  "userName": "admin",
+  "password": "nimda"
+}
+###
+
+GET http://127.0.0.1:5000/auth/logout
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTczNDc1NzQ3NSwianRpIjoiMmQ4M2EzOWQtYjdlNy00Mjc4LTk1YmUtN2YxNjJlOTBlY2Q2IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6InRlc3QiLCJuYmYiOjE3MzQ3NTc0NzUsImNzcmYiOiI5YzIyOGE0ZC03NjZjLTQzNTAtOGZjYS1hZDRjNzMzNjE0ODMiLCJleHAiOjE3MzQ3NTc1MzV9.xdsdU7NSsNF6pHyFblfwVTWgzLLq6i4tFajNrBfprMI
+
+###
+
+GET http://127.0.0.1:5000/users/all
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1MDQ5MjMwNiwianRpIjoiNmRiYzRiYmYtZjQxNy00MGU2LTgzODYtNTE1ZDIyMjM2ZWM5IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6InRlc3QiLCJuYmYiOjE3NTA0OTIzMDYsImNzcmYiOiJkMDAwODRlOS1jMzY2LTQ3NWMtYmU1MS05MzZlYjA0NWI0YWEiLCJleHAiOjE3NTA0OTI5MDZ9.5OTGn-ASfZd7z7lhvO2TjokCG81hIKOhvbjOoxA8mQQ
+
+###
+
+GET http://127.0.0.1:5000/auth/refresh-token
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTczNDc1ODI3NiwianRpIjoiZTU2NDZkZGUtYTdhYy00YmI0LTg1NzctZTE5NTkxOGIzODA3IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6InRlc3QiLCJuYmYiOjE3MzQ3NTgyNzYsImNzcmYiOiIwNTdiNTE0My02MDRiLTQzNmUtOGRkMC1lMTg3YjVmZDM4NDciLCJleHAiOjE3MzQ3NTgzMzZ9.ZmrJm7IMa70Fi9C0Y-F1av_WrmSk49Unzc9tnY97d2Y
+
+###
+
+GET http://127.0.0.1:5000/auth/user
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTcyMTk3NjkzNSwianRpIjoiYjVkNWI0N2UtZTE2Ni00YmUwLTgxY2UtODQzNGUzYWEzNGU2IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6ImFkbWluIiwibmJmIjoxNzIxOTc2OTM1LCJjc3JmIjoiZTU5ZWE3NzctNjExZS00ZmRmLTliNjItNjNkNTcxOTk1YTQ5IiwiZXhwIjoxNzIxOTc3NTM1LCJyb2xlcyI6WyJhZG1pbiIsInVzZXIiXX0.9NcLbFvM_C_V0B-4vYmkLV2xML9WLJ4DL_SCTHzEvDQ
+
+###
+
+GET http://127.0.0.1:5000/app/ping
+
+###
+
+GET http://127.0.0.1:5000/app/start
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1MDQ5MjMwNiwianRpIjoiNmRiYzRiYmYtZjQxNy00MGU2LTgzODYtNTE1ZDIyMjM2ZWM5IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6InRlc3QiLCJuYmYiOjE3NTA0OTIzMDYsImNzcmYiOiJkMDAwODRlOS1jMzY2LTQ3NWMtYmU1MS05MzZlYjA0NWI0YWEiLCJleHAiOjE3NTA0OTI5MDZ9.5OTGn-ASfZd7z7lhvO2TjokCG81hIKOhvbjOoxA8mQQ
+
+###
+
+GET http://127.0.0.1:5000/app/stop
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1MDQ5MjMwNiwianRpIjoiNmRiYzRiYmYtZjQxNy00MGU2LTgzODYtNTE1ZDIyMjM2ZWM5IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6InRlc3QiLCJuYmYiOjE3NTA0OTIzMDYsImNzcmYiOiJkMDAwODRlOS1jMzY2LTQ3NWMtYmU1MS05MzZlYjA0NWI0YWEiLCJleHAiOjE3NTA0OTI5MDZ9.5OTGn-ASfZd7z7lhvO2TjokCG81hIKOhvbjOoxA8mQQ
