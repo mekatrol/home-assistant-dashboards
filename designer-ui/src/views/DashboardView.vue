@@ -1,6 +1,9 @@
 <template>
   <main>
-    <DashboardLayout :name="dashboardName" />
+    <DashboardLayout
+      v-if="dashboardName"
+      :name="dashboardName"
+    />
   </main>
 </template>
 
@@ -14,8 +17,8 @@ const dashboardName = computed(() => {
   const parts = useRouteHelper().urlPathParts();
 
   // This must be a dashboard view
-  if (parts.lenth < 2 || parts[0] != ROUTE_DASHBOARD_VIEW) {
-    return '';
+  if (parts.length < 2 || parts[0] != ROUTE_DASHBOARD_VIEW) {
+    return undefined;
   }
 
   return parts[1];
