@@ -1,5 +1,6 @@
 app:
   lock_file: ./instance/app.lock
+  home_assistant_url: http://homeassistant.local:8123
   home_assistant_token: replace text with home assistant long lived token here
   jwt_key: ff08fca37e192d092fce59a2dc1ec9ce638db7fc4b972fc4  
   jwt_access_token_expiry_mins: 10

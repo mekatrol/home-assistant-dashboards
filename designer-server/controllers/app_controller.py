@@ -1,10 +1,13 @@
 import atexit
 from time import sleep
 import threading
+import re
 
-from flask import Blueprint, jsonify, current_app
+from flask import Blueprint, jsonify, current_app, Response, request
 from flask_jwt_extended import jwt_required
 
+from services.configuration_service import ConfigurationService
+from services.container_registry import get_container
 from services.user_service import ForbiddenException
 
 app_bp = Blueprint("app", __name__)
@@ -45,7 +48,35 @@ def start_background_task():
 # Default route for static content
 @app_bp.get("/")
 def index():
-    return current_app.send_static_file('index.html')
+    # Get the host and port from the request
+    host = request.host  # e.g., '127.0.0.1:5000'
+    
+    # Path to the static index.html file
+    path = current_app.static_folder + '/index.html'
+
+    # Read file index.html content
+    with open(path, 'r', encoding='utf-8') as f:
+        content = f.read()
+
+    # Replace API base URL
+    content = re.sub(
+        r'(<input\s+[^>]*id="api-base-url"[^>]*value=")[^"]*(")',
+        fr'\1http://{host}\2',
+        content
+    )
+
+    # Replace WebSocket base URL
+    container = get_container()
+    config_service: ConfigurationService = container.get(ConfigurationService)
+    
+    content = re.sub(
+        r'(<input\s+[^>]*id="ws-base-url"[^>]*value=")[^"]*(")',
+        fr'\1{config_service["home_assistant_url"]}\2',
+        content
+    )
+
+    # Return modified HTML content
+    return Response(content, mimetype='text/html')
 
 
 @app_bp.get("/start")
