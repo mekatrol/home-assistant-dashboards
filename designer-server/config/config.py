@@ -6,7 +6,7 @@ class DataFileConfig:
     users_data_file: str
     user_tokens_data_file: str
     user_security_roles_data_file: str
-    points_data_file: str
+    dashboards_data_file: str
 
 
 @dataclass(frozen=True)

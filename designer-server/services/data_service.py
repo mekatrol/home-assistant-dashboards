@@ -11,7 +11,7 @@ class DataService(BaseService):
     __users_db: db.JsonDatabase
     __user_tokens_db: db.JsonDatabase
     __user_security_roles_db: db.JsonDatabase
-    __points_db: db.JsonDatabase
+    __dashboards_db: db.JsonDatabase
     __lock: BaseFileLock
 
     def __init__(self, lock_file: Annotated[str, Inject(param="lock_file")], data_files: Annotated[DataFileConfig, Inject(param="data_files")]):
@@ -28,7 +28,7 @@ class DataService(BaseService):
                     "user_tokens_data_file")
                 user_security_roles_data_file = data_files.get(
                     "user_security_roles_data_file")
-                points_data_file = data_files.get("points_data_file")
+                dashboards_data_file = data_files.get("dashboards_data_file")
 
                 if users_data_file is None:
                     raise Exception(
@@ -42,15 +42,15 @@ class DataService(BaseService):
                     raise Exception(
                         "'user_security_roles_data_file' setting missing from configuration file")
 
-                if points_data_file is None:
+                if dashboards_data_file is None:
                     raise Exception(
-                        "'points_data_file' setting missing from configuration file")
+                        "'dashboards_data_file' setting missing from configuration file")
 
                 self.__users_db = db.getDb(users_data_file)
                 self.__user_tokens_db = db.getDb(user_tokens_data_file)
                 self.__user_security_roles_db = db.getDb(
                     user_security_roles_data_file)
-                self.__points_db = db.getDb(points_data_file)
+                self.__dashboards_db = db.getDb(dashboards_data_file)
         except Timeout:
             raise Exception(
                 f"Unable to acquire the application lock file: '{lock_file}'. If you are sure no instances are running then you can safely delete this lock file and re run the application. This can happen if the application crashed previously, or the app was forcibly terminated.")
@@ -72,5 +72,5 @@ class DataService(BaseService):
     def get_user_security_roles_db(self) -> db.JsonDatabase:
         return self.__user_security_roles_db
 
-    def get_points_db(self) -> db.JsonDatabase:
-        return self.__points_db
+    def get_dashboards_db(self) -> db.JsonDatabase:
+        return self.__dashboards_db

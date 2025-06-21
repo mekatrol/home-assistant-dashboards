@@ -2,7 +2,7 @@ import atexit
 from time import sleep
 import threading
 
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, current_app
 from flask_jwt_extended import jwt_required
 
 from services.user_service import ForbiddenException
@@ -40,6 +40,12 @@ def start_background_task():
         return None
     except Exception as error:
         return str(error)
+
+
+# Default route for static content
+@app_bp.get("/")
+def index():
+    return current_app.send_static_file('index.html')
 
 
 @app_bp.get("/start")

@@ -5,22 +5,11 @@ from wireup import service
 from flask_jwt_extended import current_user
 from constants.messages import INVALID_USER_NAME_OR_PASSWORD
 from constants.user_security_roles import SECURITY_ROLE_ADMIN, SECURITY_ROLE_USER
+from exceptions.permission_exceptions import ForbiddenException, InvalidCredentialsException, UserExistsException
 from services.base import BaseService
 from services.data_service import DataService
 from services.user_mapper_service import UserMapperService
 from services.user_token_service import UserTokenService
-
-
-class UserExistsException(Exception):
-    pass
-
-
-class InvalidCredentialsException(Exception):
-    pass
-
-
-class ForbiddenException(Exception):
-    pass
 
 
 @service

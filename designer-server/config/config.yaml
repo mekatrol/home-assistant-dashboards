@@ -7,4 +7,4 @@ app:
     users_data_file: ./instance/users.json
     user_tokens_data_file: ./instance/user_tokens.json
     user_security_roles_data_file: ./instance/user_security_roles.json
-    points_data_file: ./instance/points.json
+    dashboards_data_file: ./instance/dashboards.json
