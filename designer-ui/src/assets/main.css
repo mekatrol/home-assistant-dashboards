@@ -1,1 +1,17 @@
 @import './reset.css';
+@import './default.css';
+
+.router-link {
+  margin-inline: 1rem;
+  margin-block: 1rem;
+  color: var(--clr-text);
+}
+
+.error-box {
+  margin: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--clr-error);
+  color: var(--clr-error-text);
+  background-color: var(--clr-text-background);
+  border-radius: 5px;
+}

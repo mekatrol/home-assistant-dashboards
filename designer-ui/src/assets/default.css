@@ -1,0 +1,15 @@
+:root {
+  --clr-information: rgb(33, 150, 243);
+  --clr-success: hsl(143, 100%, 26%);
+  --clr-warning: hsl(43, 100%, 66%);
+  --clr-error: hsl(7, 96%, 31%);
+  --clr-error-text: hsl(0, 100%, 50%);
+
+  --clr-text: hsl(0, 0%, 0%);
+  --clr-text-background: hsl(0, 0%, 100%);
+
+  @media (prefers-color-scheme: dark) {
+    --clr-text: hsl(0, 0%, 100%);
+    --clr-text-background: hsl(0, 0%, 0%);
+  }
+}
