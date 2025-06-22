@@ -1,4 +1,4 @@
-import yaml
+import os
 from flask_jwt_extended import JWTManager
 from flask import Flask, jsonify
 from flask_cors import CORS
@@ -32,6 +32,16 @@ def create_app():
                 static_folder='web/static',
                 template_folder='web/templates')
 
+    if app.debug:
+        # Disable CORS only in development
+        CORS(app, resources={
+            r"/components/*": {"origins": "http://localhost:5173"},
+            r"/auth/*": {"origins": "http://localhost:5173"}
+        })
+    else:
+        # Initialise CORS
+        CORS(app)
+
     # Register blueprints
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(user_bp, url_prefix='/users')
@@ -44,9 +54,6 @@ def create_app():
     # Initialise JWT
     jwt = JWTManager()
     jwt.init_app(app)
-
-    # Initialise CORS
-    CORS(app, resources={r"/auth/*": {"origins": "*"}})
 
     # Make sure there is at least one user who is the default admin user
     user_service = container.get(UserService)

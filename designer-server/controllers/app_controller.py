@@ -1,9 +1,10 @@
 import atexit
+import os
 from time import sleep
 import threading
 import re
 
-from flask import Blueprint, jsonify, current_app, Response, request
+from flask import Blueprint, jsonify, current_app, Response, request, abort
 from flask_jwt_extended import jwt_required
 
 from services.configuration_service import ConfigurationService
@@ -50,7 +51,7 @@ def start_background_task():
 def index():
     # Get the host and port from the request
     host = request.host  # e.g., '127.0.0.1:5000'
-    
+
     # Path to the static index.html file
     path = current_app.static_folder + '/index.html'
 
@@ -68,7 +69,7 @@ def index():
     # Replace WebSocket base URL
     container = get_container()
     config_service: ConfigurationService = container.get(ConfigurationService)
-    
+
     content = re.sub(
         r'(<input\s+[^>]*id="ws-base-url"[^>]*value=")[^"]*(")',
         fr'\1{config_service["home_assistant_url"]}\2',
@@ -77,6 +78,33 @@ def index():
 
     # Return modified HTML content
     return Response(content, mimetype='text/html')
+
+
+@app_bp.get("/components/<path:subPath>")
+def components(subPath: str):
+    # Component base directory
+    base_dir = os.path.normpath(os.path.join(current_app.static_folder, "components"))
+
+    # Normalize full path
+    component_file_path = os.path.normpath(os.path.join(base_dir, subPath))
+
+    # Prevent path traversal
+    if not component_file_path.startswith(base_dir):
+        abort(404, f"Invalid component file '{component_file_path}'")
+
+    # Default to fallback if file doesn't exist
+    if not os.path.exists(component_file_path):
+        component_file_path = os.path.normpath(os.path.join(base_dir, "UnknownComponent.js"))
+
+    # Default to fallback if file doesn't exist
+    if not os.path.exists(component_file_path):
+        abort(404, f"Invalid component file '{component_file_path}'")
+
+    # Serve file as JS
+    with open(component_file_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+
+    return Response(content, mimetype='application/javascript')
 
 
 @app_bp.get("/start")

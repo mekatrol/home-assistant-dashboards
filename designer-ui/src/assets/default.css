@@ -8,8 +8,13 @@
   --clr-text: hsl(0, 0%, 0%);
   --clr-text-background: hsl(0, 0%, 100%);
 
+  --clr-outline: hsla(0, 0%, 50%, 0.3);
+
+  --clr-background: #fafafa;
+
   @media (prefers-color-scheme: dark) {
     --clr-text: hsl(0, 0%, 100%);
     --clr-text-background: hsl(0, 0%, 0%);
+    --clr-background: #222;
   }
 }

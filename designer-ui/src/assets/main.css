@@ -1,6 +1,10 @@
 @import './reset.css';
 @import './default.css';
 
+body {
+  background-color: var(--clr-background);
+}
+
 .router-link {
   margin-inline: 1rem;
   margin-block: 1rem;
