@@ -10,3 +10,8 @@ class ConfigurationService(BaseService):
             "config/config.yaml", "config/config.local.yaml")
 
         return all_config["app"][key]
+
+    def get(self, key, default=None):
+        all_config = load_yaml_config(
+            "config/config.yaml", "config/config.local.yaml")
+        return all_config["app"].get(key, default)

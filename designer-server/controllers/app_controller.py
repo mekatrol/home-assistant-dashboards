@@ -48,15 +48,20 @@ def start_background_task():
 
 # Default route for static content
 @app_bp.get("/")
-def index():
+@app_bp.get('/dashboard/', defaults={'path': ''})
+@app_bp.get('/dashboard/<path:path>')
+def index(path: str | None = None):
     # Get the host and port from the request
     host = request.host  # e.g., '127.0.0.1:5000'
 
     # Path to the static index.html file
-    path = current_app.static_folder + '/index.html'
+    index_path = current_app.static_folder + '/index.html'
+    
+    if not os.path.exists(index_path):
+        return "index.html not found", 404
 
     # Read file index.html content
-    with open(path, 'r', encoding='utf-8') as f:
+    with open(index_path, 'r', encoding='utf-8') as f:
         content = f.read()
 
     # Replace API base URL
@@ -69,10 +74,11 @@ def index():
     # Replace WebSocket base URL
     container = get_container()
     config_service: ConfigurationService = container.get(ConfigurationService)
+    home_assistant_url = config_service.get("home_assistant_url", "http://homeassistant.local:8123")
 
     content = re.sub(
         r'(<input\s+[^>]*id="ws-base-url"[^>]*value=")[^"]*(")',
-        fr'\1{config_service["home_assistant_url"]}\2',
+        fr'\1{home_assistant_url}\2',
         content
     )
 
@@ -83,7 +89,8 @@ def index():
 @app_bp.get("/components/<path:subPath>")
 def components(subPath: str):
     # Component base directory
-    base_dir = os.path.normpath(os.path.join(current_app.static_folder, "components"))
+    base_dir = os.path.normpath(os.path.join(
+        current_app.static_folder, "components"))
 
     # Normalize full path
     component_file_path = os.path.normpath(os.path.join(base_dir, subPath))
@@ -94,7 +101,8 @@ def components(subPath: str):
 
     # Default to fallback if file doesn't exist
     if not os.path.exists(component_file_path):
-        component_file_path = os.path.normpath(os.path.join(base_dir, "UnknownComponent.js"))
+        component_file_path = os.path.normpath(
+            os.path.join(base_dir, "UnknownComponent.js"))
 
     # Default to fallback if file doesn't exist
     if not os.path.exists(component_file_path):

@@ -5,12 +5,12 @@
       :name="dashboardName"
     />
     <div v-else>
-      <p class="error-box">ERROR: The dashboard view is being displayed for a path that does not start with the URL '{{ `/${ROUTE_DASHBOARD_VIEW}` }}'.</p>
+      <p class="error-box">ERROR: The dashboard view is being displayed for a path that does not start with the URL '{{ `/${ROUTE_DASHBOARD}` }}'.</p>
 
       <p>
         <router-link
           class="router-link"
-          :to="{ name: ROUTE_INDEX_VIEW }"
+          :to="{ name: ROUTE_INDEX }"
           >Go to index</router-link
         >
       </p>
@@ -21,7 +21,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useRouteHelper } from '@/composables/route-helper';
-import { ROUTE_DASHBOARD_VIEW, ROUTE_INDEX_VIEW } from '@/router';
+import { ROUTE_DASHBOARD, ROUTE_INDEX } from '@/router';
 import DashboardLayout from '@/components/DashboardLayout.vue';
 
 const dashboardName = computed(() => {
@@ -29,7 +29,7 @@ const dashboardName = computed(() => {
     const parts = useRouteHelper().urlPathParts();
 
     // This must be a dashboard view
-    if (parts.length < 2 || parts[0] != ROUTE_DASHBOARD_VIEW) {
+    if (parts.length < 2 || parts[0] != ROUTE_DASHBOARD) {
       return undefined;
     }
 

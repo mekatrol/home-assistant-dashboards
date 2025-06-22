@@ -78,21 +78,35 @@ gridItems[0].componentName = 'ToggleSwitch';
 
 const apiBaseUrl = getApiBaseUrl();
 
-const resolveComponent = async (name: string): Promise<Component | null> => {
-  if (name in componentMap) {
-    return componentMap[name as ComponentName];
+const resolvedComponentCache: Record<string, Component> = {};
+
+const resolveComponent = (name: string): Component | null => {
+  if (resolvedComponentCache[name]) {
+    return resolvedComponentCache[name];
   }
 
-  try {
-    // Dynamically import the remote component
-    const url = `${apiBaseUrl}/components/${name}`;
-    const remoteModule = await import(/* @vite-ignore */ url);
-    console.log(remoteModule);
-    return defineAsyncComponent(() => Promise.resolve(remoteModule.default));
-  } catch {
-    // Component name was not found on the server
-    return null;
+  if (name in componentMap) {
+    resolvedComponentCache[name] = componentMap[name as ComponentName];
+    return resolvedComponentCache[name];
   }
+
+  const url = `${apiBaseUrl}/components/${name}`;
+
+  // Dynamically create an async component (Vue will lazy-load it)
+  const asyncComp = defineAsyncComponent({
+    loader: () => import(/* @vite-ignore */ url).then((mod) => mod.default),
+    delay: 200,
+    timeout: 5000,
+    errorComponent: {
+      template: `<div style="color: red;">Component ${name} load failed</div>`
+    },
+    loadingComponent: {
+      template: `<div>Loading ${name}...</div>`
+    }
+  });
+
+  resolvedComponentCache[name] = asyncComp;
+  return asyncComp;
 };
 
 const gridStyle = (): string => {

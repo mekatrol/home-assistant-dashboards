@@ -1,3 +1,3 @@
 <template>
-  <div>Toggle Switch</div>
+  <div><button>Toggle Switch</button></div>
 </template>
