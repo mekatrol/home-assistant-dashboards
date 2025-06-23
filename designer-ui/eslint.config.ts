@@ -1,6 +1,6 @@
 import { globalIgnores } from 'eslint/config';
 import { defineConfigWithVueTs, vueTsConfigs } from '@vue/eslint-config-typescript';
-import pluginVue, { rules } from 'eslint-plugin-vue';
+import pluginVue from 'eslint-plugin-vue';
 import pluginVitest from '@vitest/eslint-plugin';
 import skipFormatting from '@vue/eslint-config-prettier/skip-formatting';
 
@@ -96,6 +96,13 @@ export default defineConfigWithVueTs(
           caughtErrorsIgnorePattern: '^_.*$'
         }
       ]
+    }
+  },
+  {
+    // add overrides here to disable rule ONLY for compile-vue.cjs
+    files: ['src/cwc/*.js'],
+    rules: {
+      '@typescript-eslint/explicit-function-return-type': 'off'
     }
   }
 );

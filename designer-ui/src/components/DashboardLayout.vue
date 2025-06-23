@@ -18,9 +18,9 @@
 </template>
 
 <script setup lang="ts">
-import { defineAsyncComponent, type Component } from 'vue';
-import { getApiBaseUrl } from '@/services/url';
+import { ref, type Component } from 'vue';
 import ToggleSwitch from '@/components/ToggleSwitch.vue';
+import RemoteComponent from '@/components/RemoteComponent.vue';
 
 interface Props {
   name: string;
@@ -43,7 +43,8 @@ interface Layout {
 }
 
 const componentMap = {
-  ToggleSwitch
+  ToggleSwitch,
+  RemoteComponent
 } as const;
 
 type ComponentName = keyof typeof componentMap;
@@ -72,13 +73,13 @@ const defaultGridItem = (index: number): GridItem => {
 };
 
 // Create the empty grid item arraay
-const gridItems: GridItem[] = Array.from({ length: layout.columns * layout.rows }, (_, i) => defaultGridItem(i));
-
-gridItems[0].componentName = 'ToggleSwitch';
-
-const apiBaseUrl = getApiBaseUrl();
-
 const resolvedComponentCache: Record<string, Component> = {};
+const gridItems = ref<GridItem[]>(Array.from({ length: layout.columns * layout.rows }, (_, i) => defaultGridItem(i)));
+
+gridItems.value[0].componentName = 'RemoteComponent';
+gridItems.value[2].componentName = 'ToggleSwitch';
+gridItems.value[5].componentName = 'ToggleSwitch';
+gridItems.value[7].componentName = 'RemoteComponent';
 
 const resolveComponent = (name: string): Component | null => {
   if (resolvedComponentCache[name]) {
@@ -90,23 +91,8 @@ const resolveComponent = (name: string): Component | null => {
     return resolvedComponentCache[name];
   }
 
-  const url = `${apiBaseUrl}/components/${name}`;
-
-  // Dynamically create an async component (Vue will lazy-load it)
-  const asyncComp = defineAsyncComponent({
-    loader: () => import(/* @vite-ignore */ url).then((mod) => mod.default),
-    delay: 200,
-    timeout: 5000,
-    errorComponent: {
-      template: `<div style="color: red;">Component ${name} load failed</div>`
-    },
-    loadingComponent: {
-      template: `<div>Loading ${name}...</div>`
-    }
-  });
-
-  resolvedComponentCache[name] = asyncComp;
-  return asyncComp;
+  // Component not found
+  return null;
 };
 
 const gridStyle = (): string => {

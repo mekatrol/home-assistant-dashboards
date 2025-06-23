@@ -102,7 +102,7 @@ def components(subPath: str):
     # Default to fallback if file doesn't exist
     if not os.path.exists(component_file_path):
         component_file_path = os.path.normpath(
-            os.path.join(base_dir, "UnknownComponent.js"))
+            os.path.join(base_dir, "cwc-default-web-component.js"))
 
     # Default to fallback if file doesn't exist
     if not os.path.exists(component_file_path):
