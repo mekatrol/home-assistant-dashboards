@@ -12,6 +12,8 @@
       <component
         v-if="item.componentName"
         :is="resolveComponent(item.componentName)"
+        v-bind="{ ...item.props }"
+        :name="item.webComponentName"
       />
     </div>
   </div>
@@ -20,7 +22,7 @@
 <script setup lang="ts">
 import { ref, type Component } from 'vue';
 import ToggleSwitch from '@/components/ToggleSwitch.vue';
-import RemoteComponent from '@/components/RemoteComponent.vue';
+import RemoteComponent from '@/components/RemoteWebComponent.vue';
 
 interface Props {
   name: string;
@@ -28,6 +30,8 @@ interface Props {
 
 interface GridItem {
   componentName?: string; // An undefined component displays as an empty grid item
+  webComponentName?: string;
+  props?: object;
   column: number;
   row: number;
   columnSpan: number;
@@ -66,7 +70,8 @@ const defaultGridItem = (index: number): GridItem => {
     column: (index % layout.rows) + 1,
     columnSpan: 1,
     rowSpan: 1,
-    cssClass: ''
+    cssClass: '',
+    props: {}
   };
 
   return item;
@@ -77,9 +82,14 @@ const resolvedComponentCache: Record<string, Component> = {};
 const gridItems = ref<GridItem[]>(Array.from({ length: layout.columns * layout.rows }, (_, i) => defaultGridItem(i)));
 
 gridItems.value[0].componentName = 'RemoteComponent';
+gridItems.value[0].props = { x: 34 };
+gridItems.value[0].webComponentName = 'custom-component1';
+
 gridItems.value[2].componentName = 'ToggleSwitch';
 gridItems.value[5].componentName = 'ToggleSwitch';
+
 gridItems.value[7].componentName = 'RemoteComponent';
+gridItems.value[7].webComponentName = 'custom-component2';
 
 const resolveComponent = (name: string): Component | null => {
   if (resolvedComponentCache[name]) {

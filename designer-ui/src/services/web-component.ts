@@ -1,0 +1,66 @@
+import type { HassEntities } from 'home-assistant-js-websocket';
+import { getApiBaseUrl } from './url';
+import { nextTick } from 'vue';
+
+const apiBaseUrl = getApiBaseUrl();
+
+export interface CwcWebComponent {
+  hass: HassEntities;
+  config: string;
+}
+
+const loadScriptFromUrl = async (url: string): Promise<void> => {
+  // If the script is already loaded, return immediately
+  if (document.querySelector(`script[src="${url}"]`)) {
+    return;
+  }
+
+  const script = document.createElement('script');
+  script.src = url;
+
+  // Wait for the script to load or error
+  await new Promise<void>((resolve, reject) => {
+    script.onload = (): void => resolve();
+    script.onerror = (): void => reject(new Error(`Failed to load ${url}`));
+    document.head.appendChild(script);
+  });
+};
+
+export const loadWebComponent = async (name: string, finishedLoading: (hadError: boolean) => void): Promise<void> => {
+  try {
+    const url = `${apiBaseUrl}/components/${name}`;
+    const componentName = `cwc-${name}`;
+
+    let loadError = false;
+    try {
+      await loadScriptFromUrl(url);
+    } catch (e) {
+      console.error(e);
+      loadError = true;
+      return;
+    } finally {
+      finishedLoading(loadError);
+    }
+
+    await customElements.whenDefined(componentName);
+
+    // Wait for the DOM to update
+    await nextTick();
+
+    // Get the element with the specified name
+    const el = document.querySelector(componentName) as HTMLElement & { setConfig?: (s: string) => void };
+
+    // If it has a set config then set config value
+    if (el?.setConfig) {
+      try {
+        el.setConfig('here you go 2');
+      } catch (e) {
+        console.error(e);
+      }
+    } else {
+      console.warn(`setConfig method not found on <${name}>`);
+    }
+  } catch (e) {
+    console.error(e);
+  }
+};

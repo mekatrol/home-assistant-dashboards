@@ -56,7 +56,7 @@ def index(path: str | None = None):
 
     # Path to the static index.html file
     index_path = current_app.static_folder + '/index.html'
-    
+
     if not os.path.exists(index_path):
         return "index.html not found", 404
 
@@ -74,7 +74,8 @@ def index(path: str | None = None):
     # Replace WebSocket base URL
     container = get_container()
     config_service: ConfigurationService = container.get(ConfigurationService)
-    home_assistant_url = config_service.get("home_assistant_url", "http://homeassistant.local:8123")
+    home_assistant_url = config_service.get(
+        "home_assistant_url", "http://homeassistant.local:8123")
 
     content = re.sub(
         r'(<input\s+[^>]*id="ws-base-url"[^>]*value=")[^"]*(")',
@@ -86,14 +87,14 @@ def index(path: str | None = None):
     return Response(content, mimetype='text/html')
 
 
-@app_bp.get("/components/<path:subPath>")
-def components(subPath: str):
+@app_bp.get("/components/<path:sub_path>")
+def components(sub_path: str):
     # Component base directory
     base_dir = os.path.normpath(os.path.join(
         current_app.static_folder, "components"))
 
     # Normalize full path
-    component_file_path = os.path.normpath(os.path.join(base_dir, subPath))
+    component_file_path = os.path.normpath(os.path.join(base_dir, sub_path))
 
     # Prevent path traversal
     if not component_file_path.startswith(base_dir):
@@ -111,6 +112,20 @@ def components(subPath: str):
     # Serve file as JS
     with open(component_file_path, 'r', encoding='utf-8') as f:
         content = f.read()
+
+    # Convert to PascalCase for the class name
+    def to_pascal_case(s: str) -> str:
+        return ''.join(word.capitalize() for word in re.split(r"[\W_]+", s))
+
+    # Convert to kebab-case for the element name
+    def to_kebab_case(s: str) -> str:
+        return re.sub(r'[_\s]+', '-', re.sub(r'([a-z])([A-Z])', r'\1-\2', s)).lower()
+
+    class_name = f"Cwc{to_pascal_case(sub_path)}"
+    element_name = f"cwc-{to_kebab_case(sub_path)}"
+
+    content = re.sub(r"\bCwcDefaultWebComponent\b", class_name, content)
+    content = re.sub(r"\bcwc-default-web-component\b", element_name, content)
 
     return Response(content, mimetype='application/javascript')
 
