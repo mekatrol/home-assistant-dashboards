@@ -13,7 +13,6 @@
         v-if="item.componentName"
         :is="resolveComponent(item.componentName)"
         v-bind="{ ...item.props }"
-        :name="item.webComponentName"
       />
     </div>
   </div>
@@ -30,7 +29,6 @@ interface Props {
 
 interface GridItem {
   componentName?: string; // An undefined component displays as an empty grid item
-  webComponentName?: string;
   props?: object;
   column: number;
   row: number;
@@ -82,14 +80,13 @@ const resolvedComponentCache: Record<string, Component> = {};
 const gridItems = ref<GridItem[]>(Array.from({ length: layout.columns * layout.rows }, (_, i) => defaultGridItem(i)));
 
 gridItems.value[0].componentName = 'RemoteComponent';
-gridItems.value[0].props = { x: 34 };
-gridItems.value[0].webComponentName = 'custom-component1';
+gridItems.value[0].props = { name: 'custom-component', x: 23 };
 
 gridItems.value[2].componentName = 'ToggleSwitch';
 gridItems.value[5].componentName = 'ToggleSwitch';
 
 gridItems.value[7].componentName = 'RemoteComponent';
-gridItems.value[7].webComponentName = 'custom-component2';
+gridItems.value[7].props = { name: 'custom-component', x: 32 };
 
 const resolveComponent = (name: string): Component | null => {
   if (resolvedComponentCache[name]) {
