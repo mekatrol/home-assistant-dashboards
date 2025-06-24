@@ -53,7 +53,7 @@ export const loadWebComponent = async (name: string, finishedLoading: (hadError:
     // If it has a set config then set config value
     if (el?.setConfig) {
       try {
-        el.setConfig('here you go 2');
+        el.setConfig('here you go');
       } catch (e) {
         console.error(e);
       }

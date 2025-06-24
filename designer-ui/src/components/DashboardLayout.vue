@@ -82,11 +82,14 @@ const gridItems = ref<GridItem[]>(Array.from({ length: layout.columns * layout.r
 gridItems.value[0].componentName = 'RemoteComponent';
 gridItems.value[0].props = { name: 'custom-component', x: 23 };
 
-gridItems.value[2].componentName = 'ToggleSwitch';
-gridItems.value[5].componentName = 'ToggleSwitch';
+gridItems.value[3].componentName = 'ToggleSwitch';
+gridItems.value[4].componentName = 'ToggleSwitch';
+gridItems.value[4].columnSpan = 4;
+gridItems.value[4].props = { class: 'toggle3' };
 
-gridItems.value[7].componentName = 'RemoteComponent';
-gridItems.value[7].props = { name: 'custom-component', x: 32 };
+gridItems.value[1].componentName = 'RemoteComponent';
+gridItems.value[1].props = { name: 'date-time-web-component', x: 32 };
+gridItems.value[1].columnSpan = 2;
 
 const resolveComponent = (name: string): Component | null => {
   if (resolvedComponentCache[name]) {

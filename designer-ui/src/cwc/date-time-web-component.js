@@ -1,5 +1,4 @@
-// my-web-component.js
-class DefaultWebComponent extends HTMLElement {
+class DateTimeWebComponent extends HTMLElement {
   constructor() {
     super();
     // Attach a shadow root to isolate styles
@@ -14,11 +13,11 @@ class DefaultWebComponent extends HTMLElement {
     this.shadowRoot.innerHTML = `
       <style>
         p {
-          color: greenyellow;
+          color: red;
           font-weight: bold;
         }
       </style>
-      <p>This is the default web component placeholder.</p>
+      <p>This is the date time web component.</p>
     `;
   }
 
@@ -27,9 +26,9 @@ class DefaultWebComponent extends HTMLElement {
   }
 
   setConfig(config) {
-    console.log(`setConfig: '${config}'`);
+    console.log(`date time: '${config}'`);
   }
 }
 
 // Define the custom element
-customElements.define('cwc-default-web-component', DefaultWebComponent);
+customElements.define('cwc-date-time-web-component', DateTimeWebComponent);

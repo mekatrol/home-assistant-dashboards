@@ -94,7 +94,10 @@ def components(sub_path: str):
         current_app.static_folder, "components"))
 
     # Normalize full path
-    component_file_path = os.path.normpath(os.path.join(base_dir, sub_path))
+    component_file_path = os.path.normpath(
+        os.path.join(base_dir, f'{sub_path}.js'))
+
+    load_default_wc = False
 
     # Prevent path traversal
     if not component_file_path.startswith(base_dir):
@@ -102,8 +105,9 @@ def components(sub_path: str):
 
     # Default to fallback if file doesn't exist
     if not os.path.exists(component_file_path):
+        load_default_wc = True
         component_file_path = os.path.normpath(
-            os.path.join(base_dir, "cwc-default-web-component.js"))
+            os.path.join(base_dir, "default-web-component.js"))
 
     # Default to fallback if file doesn't exist
     if not os.path.exists(component_file_path):
@@ -121,11 +125,13 @@ def components(sub_path: str):
     def to_kebab_case(s: str) -> str:
         return re.sub(r'[_\s]+', '-', re.sub(r'([a-z])([A-Z])', r'\1-\2', s)).lower()
 
-    class_name = f"Cwc{to_pascal_case(sub_path)}"
-    element_name = f"cwc-{to_kebab_case(sub_path)}"
+    if load_default_wc:
+        class_name = f"Cwc{to_pascal_case(sub_path)}"
+        element_name = f"cwc-{to_kebab_case(sub_path)}"
 
-    content = re.sub(r"\bCwcDefaultWebComponent\b", class_name, content)
-    content = re.sub(r"\bcwc-default-web-component\b", element_name, content)
+        content = re.sub(r"\bCwcDefaultWebComponent\b", class_name, content)
+        content = re.sub(r"\bcwc-default-web-component\b",
+                         element_name, content)
 
     return Response(content, mimetype='application/javascript')
 
