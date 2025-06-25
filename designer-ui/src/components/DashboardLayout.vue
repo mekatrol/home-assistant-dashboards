@@ -2,6 +2,7 @@
   <div
     class="grid"
     :style="gridStyle()"
+    ref="container"
   >
     <div
       v-for="(item, i) in gridItems"
@@ -19,9 +20,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, type Component } from 'vue';
+import { ref, type Component, watch, onMounted } from 'vue';
 import ToggleSwitch from '@/components/ToggleSwitch.vue';
 import RemoteComponent from '@/components/RemoteWebComponent.vue';
+import { useAppStore } from '@/stores/app-store';
+import { updateHassEntities } from '@/services/web-component';
 
 interface Props {
   name: string;
@@ -120,6 +123,21 @@ const gridStyle = (): string => {
 const gridItemStyle = (item: GridItem): string => {
   return `grid-column: ${item.column} / span ${item.columnSpan}; grid-row: ${item.row} / span ${item.rowSpan};`;
 };
+
+const container = ref<HTMLDivElement | null>(null);
+const appStore = useAppStore();
+
+onMounted(() => updateHassEntities(container.value!, appStore.homeAssistantEntities));
+
+watch(
+  () => appStore.homeAssistantEntities,
+  (entities) => {
+    if (container.value) {
+      updateHassEntities(container.value, entities);
+    }
+  },
+  { immediate: true }
+);
 </script>
 
 <style scoped lang="css">

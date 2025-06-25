@@ -2,6 +2,8 @@ import type { HassEntities } from 'home-assistant-js-websocket';
 import { getApiBaseUrl } from './url';
 import { nextTick } from 'vue';
 
+export const CWC_PREFIX = 'cwc-';
+
 const apiBaseUrl = getApiBaseUrl();
 
 export interface CwcWebComponent {
@@ -29,7 +31,7 @@ const loadScriptFromUrl = async (url: string): Promise<void> => {
 export const loadWebComponent = async (name: string, finishedLoading: (hadError: boolean) => void): Promise<void> => {
   try {
     const url = `${apiBaseUrl}/components/${name}`;
-    const componentName = `cwc-${name}`;
+    const componentName = `${CWC_PREFIX}${name}`;
 
     let loadError = false;
     try {
@@ -62,5 +64,29 @@ export const loadWebComponent = async (name: string, finishedLoading: (hadError:
     }
   } catch (e) {
     console.error(e);
+  }
+};
+
+export const updateHassEntities = (container: HTMLElement, entities: HassEntities | undefined): void => {
+  if (entities && container) {
+    const cwcComponents = Array.from(container.querySelectorAll('*')).filter((el) => el.tagName.toLowerCase().startsWith(CWC_PREFIX));
+
+    cwcComponents.forEach((component) => {
+      try {
+        // Check if the component has the 'set hass' property
+        const proto = Object.getPrototypeOf(component);
+        const hasHassSetter = Object.getOwnPropertyDescriptor(proto, 'hass')?.set !== undefined;
+
+        if (hasHassSetter) {
+          // Get element with intersection of 'set hass' property
+          const c = component as HTMLElement & { hass?: HassEntities };
+
+          // Set entitie
+          c.hass = entities;
+        }
+      } catch (_err) {
+        /* do nothing here */
+      }
+    });
   }
 };

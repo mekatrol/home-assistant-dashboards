@@ -182,11 +182,11 @@ class DateTimeWebComponent extends HTMLElement {
     `;
   }
 
-  set hass(hass) {
+  set hass(_entities) {
     // optional: for Home Assistant integration
   }
 
-  setConfig(config) {
+  setConfig(_config) {
     // optional: for Home Assistant integration
   }
 }

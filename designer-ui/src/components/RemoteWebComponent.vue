@@ -9,13 +9,13 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
-import { loadWebComponent } from '@/services/web-component';
+import { loadWebComponent, CWC_PREFIX } from '@/services/web-component';
 
 const props = defineProps<{
   name: string;
 }>();
 
-const tagName = computed(() => `cwc-${props.name}`);
+const tagName = computed(() => `${CWC_PREFIX}${props.name}`);
 
 const loaded = ref(false);
 const loadError = ref(false);

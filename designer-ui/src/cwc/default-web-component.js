@@ -21,12 +21,12 @@ class DefaultWebComponent extends HTMLElement {
     `;
   }
 
-  set hass(hass) {
-    console.log(`set hass: '${hass}'`);
+  set hass(_entities) {
+    // optional: for Home Assistant integration
   }
 
-  setConfig(config) {
-    console.log(`setConfig: '${config}'`);
+  setConfig(_config) {
+    // optional: for Home Assistant integration
   }
 }
 
