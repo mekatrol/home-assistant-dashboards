@@ -60,12 +60,12 @@ const layout: Layout = {
   rows: 4
 };
 
-const defaultGridItem = (index: number): GridItem => {
+const defaultGridItem = (row: number, column: number): GridItem => {
   // The layout is rows then columns
   const item = {
     componentName: undefined,
-    row: Math.floor(index / layout.rows) + 1,
-    column: (index % layout.rows) + 1,
+    row: row,
+    column: column,
     columnSpan: 1,
     rowSpan: 1,
     cssClass: '',
@@ -77,19 +77,24 @@ const defaultGridItem = (index: number): GridItem => {
 
 // Create the empty grid item arraay
 const resolvedComponentCache: Record<string, Component> = {};
-const gridItems = ref<GridItem[]>(Array.from({ length: layout.columns * layout.rows }, (_, i) => defaultGridItem(i)));
+const gridItems = ref<GridItem[]>([]);
 
+gridItems.value[0] = defaultGridItem(4, 4);
 gridItems.value[0].componentName = 'RemoteComponent';
 gridItems.value[0].props = { name: 'custom-component', x: 23 };
 
-gridItems.value[3].componentName = 'ToggleSwitch';
-gridItems.value[4].componentName = 'ToggleSwitch';
-gridItems.value[4].columnSpan = 4;
-gridItems.value[4].props = { class: 'toggle3' };
+gridItems.value[1] = defaultGridItem(1, 2);
+gridItems.value[1].componentName = 'ToggleSwitch';
 
-gridItems.value[1].componentName = 'RemoteComponent';
-gridItems.value[1].props = { name: 'date-time-web-component', x: 32 };
-gridItems.value[1].columnSpan = 2;
+gridItems.value[2] = defaultGridItem(2, 1);
+gridItems.value[2].componentName = 'ToggleSwitch';
+gridItems.value[2].columnSpan = 4;
+gridItems.value[2].props = { class: 'toggle3' };
+
+gridItems.value[3] = defaultGridItem(3, 1);
+gridItems.value[3].componentName = 'RemoteComponent';
+gridItems.value[3].props = { name: 'date-time-web-component', x: 32 };
+gridItems.value[3].columnSpan = 2;
 
 const resolveComponent = (name: string): Component | null => {
   if (resolvedComponentCache[name]) {
