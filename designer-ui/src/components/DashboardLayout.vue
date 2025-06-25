@@ -6,7 +6,7 @@
     <div
       v-for="(item, i) in gridItems"
       :key="i"
-      :class="`item ${item.componentName ? '' : 'show-outline'} ${item.cssClass ?? ''}`"
+      :class="`item ${item.cssClass ?? ''}`"
       :style="`${gridItemStyle(item)}`"
     >
       <component
@@ -81,9 +81,9 @@ const gridItems = ref<GridItem[]>([]);
 
 gridItems.value[0] = defaultGridItem(4, 4);
 gridItems.value[0].componentName = 'RemoteComponent';
-gridItems.value[0].props = { name: 'custom-component', x: 23 };
+gridItems.value[0].props = { name: 'custom-component' };
 
-gridItems.value[1] = defaultGridItem(1, 2);
+gridItems.value[1] = defaultGridItem(3, 2);
 gridItems.value[1].componentName = 'ToggleSwitch';
 
 gridItems.value[2] = defaultGridItem(2, 1);
@@ -91,9 +91,9 @@ gridItems.value[2].componentName = 'ToggleSwitch';
 gridItems.value[2].columnSpan = 4;
 gridItems.value[2].props = { class: 'toggle3' };
 
-gridItems.value[3] = defaultGridItem(3, 1);
+gridItems.value[3] = defaultGridItem(1, 2);
 gridItems.value[3].componentName = 'RemoteComponent';
-gridItems.value[3].props = { name: 'date-time-web-component', x: 32 };
+gridItems.value[3].props = { name: 'date-time-web-component' };
 gridItems.value[3].columnSpan = 2;
 
 const resolveComponent = (name: string): Component | null => {
@@ -131,11 +131,5 @@ const gridItemStyle = (item: GridItem): string => {
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
-}
-
-.item.show-outline {
-  outline: 1px dashed var(--clr-outline);
-  outline-offset: -2px;
 }
 </style>
