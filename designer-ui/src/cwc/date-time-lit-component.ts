@@ -5,8 +5,8 @@ import { customElement, property, state } from 'lit/decorators.js';
 const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-@customElement('cwc-date-time-web-component')
-export class DateTimeWebComponent extends LitElement {
+@customElement('cwc-date-time-lit-component')
+export class DateTimeLitComponent extends LitElement {
   @state()
   private timeDisplay: string = '';
 
@@ -22,7 +22,63 @@ export class DateTimeWebComponent extends LitElement {
   private timer: ReturnType<typeof setInterval> | null = null;
 
   @property({ type: Object })
-  entities: HassEntities | null = null;
+  hass: HassEntities | null = null;
+
+  connectedCallback(): void {
+    super.connectedCallback();
+    this.updateTime();
+    this.timer = setInterval(() => this.updateTime(), 1000);
+  }
+
+  disconnectedCallback(): void {
+    super.disconnectedCallback();
+    if (this.timer) {
+      clearInterval(this.timer);
+      this.timer = null;
+    }
+  }
+
+  setConfig(_config: string): void {
+    // optional: for Home Assistant integration
+  }
+
+  private updateTime(): void {
+    const now = new Date();
+    this.timeDisplay = this.getTimeWithMeridiem(now, false);
+    this.dateDisplay = this.getShortDateWithDay(now);
+
+    const sunEntity = this.hass?.['sun.sun'];
+    if (sunEntity?.attributes) {
+      const nextDawn = sunEntity.attributes['next_dawn'];
+      const nextDusk = sunEntity.attributes['next_dusk'];
+      this.sunrise = nextDawn ? this.getTimeWithMeridiem(new Date(nextDawn), false) : '';
+      this.sunset = nextDusk ? this.getTimeWithMeridiem(new Date(nextDusk), false) : '';
+      this.requestUpdate();
+    }
+  }
+
+  private getMeridiem(dt: Date): string {
+    return dt.getHours() >= 12 ? 'PM' : 'AM';
+  }
+
+  private getHours12Hour(dt: Date): number {
+    const hrs24 = dt.getHours();
+    return hrs24 > 12 ? hrs24 - 12 : hrs24;
+  }
+
+  private getZeroPadded(v: number): string {
+    return `${v}`.padStart(2, '0');
+  }
+
+  private getTimeWithMeridiem(dateTime: Date, withSeconds: boolean): string {
+    const dt = dateTime ?? new Date();
+    return this.getHours12Hour(dt) + ':' + this.getZeroPadded(dt.getMinutes()) + (withSeconds ? `:${this.getZeroPadded(dt.getSeconds())}` : '') + ' ' + this.getMeridiem(dt);
+  }
+
+  private getShortDateWithDay(dateTime: Date): string {
+    const dt = dateTime ?? new Date();
+    return daysOfWeek[dt.getDay()].toUpperCase() + ' ' + dt.getDate() + ' ' + months[dt.getMonth()].toUpperCase() + ' ' + dt.getFullYear();
+  }
 
   static styles = css`
     :host {
@@ -103,57 +159,6 @@ export class DateTimeWebComponent extends LitElement {
       color: var(--clr-sunset);
     }
   `;
-
-  connectedCallback(): void {
-    super.connectedCallback();
-    this.updateTime();
-    this.timer = setInterval(() => this.updateTime(), 1000);
-  }
-
-  disconnectedCallback(): void {
-    super.disconnectedCallback();
-    if (this.timer) {
-      clearInterval(this.timer);
-      this.timer = null;
-    }
-  }
-
-  private updateTime(): void {
-    const now = new Date();
-    this.timeDisplay = this.getTimeWithMeridiem(now, false);
-    this.dateDisplay = this.getShortDateWithDay(now);
-
-    const sunEntity = this.entities?.['sun.sun'];
-    if (sunEntity?.attributes) {
-      const nextDawn = sunEntity.attributes['next_dawn'];
-      const nextDusk = sunEntity.attributes['next_dusk'];
-      this.sunrise = nextDawn ? this.getTimeWithMeridiem(new Date(nextDawn), false) : '';
-      this.sunset = nextDusk ? this.getTimeWithMeridiem(new Date(nextDusk), false) : '';
-    }
-  }
-
-  private getMeridiem(dt: Date): string {
-    return dt.getHours() >= 12 ? 'PM' : 'AM';
-  }
-
-  private getHours12Hour(dt: Date): number {
-    const hrs24 = dt.getHours();
-    return hrs24 > 12 ? hrs24 - 12 : hrs24;
-  }
-
-  private getZeroPadded(v: number): string {
-    return `${v}`.padStart(2, '0');
-  }
-
-  private getTimeWithMeridiem(dateTime: Date, withSeconds: boolean): string {
-    const dt = dateTime ?? new Date();
-    return this.getHours12Hour(dt) + ':' + this.getZeroPadded(dt.getMinutes()) + (withSeconds ? `:${this.getZeroPadded(dt.getSeconds())}` : '') + ' ' + this.getMeridiem(dt);
-  }
-
-  private getShortDateWithDay(dateTime: Date): string {
-    const dt = dateTime ?? new Date();
-    return daysOfWeek[dt.getDay()].toUpperCase() + ' ' + dt.getDate() + ' ' + months[dt.getMonth()].toUpperCase() + ' ' + dt.getFullYear();
-  }
 
   render(): unknown {
     return html`

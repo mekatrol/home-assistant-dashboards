@@ -85,6 +85,11 @@ gridItems.value[0].componentName = 'RemoteComponent';
 gridItems.value[0].props = { name: 'date-time-web-component' };
 gridItems.value[0].columnSpan = 4;
 
+gridItems.value[1] = defaultGridItem(3, 1);
+gridItems.value[1].componentName = 'RemoteComponent';
+gridItems.value[1].props = { name: 'date-time-lit-component' };
+gridItems.value[1].columnSpan = 4;
+
 const resolveComponent = (name: string): Component | null => {
   if (resolvedComponentCache[name]) {
     return resolvedComponentCache[name];

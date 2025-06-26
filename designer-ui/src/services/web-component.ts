@@ -37,6 +37,7 @@ const loadScriptFromUrl = async (url: string): Promise<void> => {
   }
 
   const script = document.createElement('script');
+  script.type = 'module';
   script.src = url;
 
   // Wait for the script to load or error
