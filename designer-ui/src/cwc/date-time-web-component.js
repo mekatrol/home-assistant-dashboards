@@ -6,6 +6,7 @@ class DateTimeWebComponent extends HTMLElement {
     super();
     this.attachShadow({ mode: 'open' });
     this.timer = null;
+    this.entities = null;
   }
 
   connectedCallback() {
@@ -65,6 +66,24 @@ class DateTimeWebComponent extends HTMLElement {
     if (timeEl) {
       timeEl.textContent = timeDisplay;
     }
+
+    if (this.entities) {
+      const sunEntity = this.entities['sun.sun'];
+      if (sunEntity && sunEntity.attributes) {
+        const sunrise = sunEntity.attributes['next_dawn'];
+        const sunriseEl = this.shadowRoot.querySelector('#sunrise');
+
+        if (sunrise && sunriseEl) {
+          sunriseEl.textContent = this.getTimeWithMeridiem(new Date(sunrise), false);
+        }
+
+        const sunset = sunEntity.attributes['next_dusk'];
+        const sunsetEl = this.shadowRoot.querySelector('#sunset');
+        if (sunset && sunsetEl) {
+          sunsetEl.textContent = this.getTimeWithMeridiem(new Date(sunset), false);
+        }
+      }
+    }
   }
 
   render() {
@@ -96,7 +115,7 @@ class DateTimeWebComponent extends HTMLElement {
           font-family: 'Material Symbols Outlined';
           font-weight: normal;
           font-style: normal;
-          font-size: 36px;
+          font-size: 24px;
           line-height: 1;
           letter-spacing: normal;
           text-transform: none;
@@ -137,23 +156,23 @@ class DateTimeWebComponent extends HTMLElement {
             height: 100%;
             display: flex;
             flex-direction: row;
+            flex-wrap: wrap;
             gap: 5px;
             align-content: center;
             justify-content: center;
+            align-items: center;
+            font-size: 1.3rem;
           }
 
           .date {
-            font-size: 1.3rem;
             color: var(--clr-date);
           }
 
           .sunrise {
-            font-size: 1.3rem;
             color: var(--clr-sunrise);
           }
 
           .sunset {
-            font-size: 1.3rem;
             color: var(--clr-sunset);
           }
         }    
@@ -164,26 +183,26 @@ class DateTimeWebComponent extends HTMLElement {
         <div style="display: flex; flex-direction: row; gap: 30px">
           <div
             class="sunrise"
-            id="sunrise"
           >
             <span class="icon">sunny</span>
+            <span id="sunrise"></span>
           </div>
-          <div>
-            <p class="date"><span class="icon">calendar_month</span><span id="date"></span></p>
+          <div class="date">
+            <span class="icon">calendar_month</span><span id="date"></span>
           </div>
           <div
             class="sunset"
-            v-if="sunsetPoint"
           >
             <span class="icon">routine</span>
+            <span id="sunset"></span>
           </div>
         </div>
       </div>
     `;
   }
 
-  set hass(_entities) {
-    // optional: for Home Assistant integration
+  set hass(entities) {
+    this.entities = entities;
   }
 
   setConfig(_config) {

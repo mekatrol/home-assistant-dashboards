@@ -19,6 +19,7 @@ import {
   ERR_INVALID_HTTPS_TO_HTTP,
   type HassEntities
 } from 'home-assistant-js-websocket';
+import { updateHassEntities } from './web-component';
 
 const url = getWebSocketBaseUrl();
 let connection: Connection | undefined = undefined;
@@ -40,12 +41,16 @@ const errorToMessage = (err: unknown): string => {
   }
 };
 
-export const homeAssistantConnect = async (): Promise<void> => {
+export const homeAssistantConnect = async (container: HTMLElement): Promise<void> => {
   try {
+    const appStore = useAppStore();
+    appStore.incrementBusy();
+
     // Get long lived token from the server
     const token = await getHomeAssistantToken();
 
     if (token === undefined) {
+      appStore.decrementBusy();
       // No token then don't connect
       return;
     }
@@ -54,9 +59,10 @@ export const homeAssistantConnect = async (): Promise<void> => {
 
     connection = await createConnection({ auth });
 
-    const appStore = useAppStore();
     subscribeEntities(connection, (entities: HassEntities) => {
       appStore.setHomeAssistantEntities(entities);
+      updateHassEntities(container, entities);
+      appStore.decrementBusy();
     });
   } catch (err: unknown) {
     throw Error(`Connection to home assistant failed with: '${errorToMessage(err)}'`);

@@ -1,6 +1,7 @@
 import type { HassEntities } from 'home-assistant-js-websocket';
 import { getApiBaseUrl } from './url';
 import { nextTick } from 'vue';
+import { useAppStore } from '@/stores/app-store';
 
 export const CWC_PREFIX = 'cwc-';
 
@@ -10,6 +11,24 @@ export interface CwcWebComponent {
   hass: HassEntities;
   config: string;
 }
+
+const setComponentEntities = (component: Element, entities: HassEntities): void => {
+  try {
+    // Check if the component has the 'set hass' property
+    const proto = Object.getPrototypeOf(component);
+    const hasHassSetter = Object.getOwnPropertyDescriptor(proto, 'hass')?.set !== undefined;
+
+    if (hasHassSetter) {
+      // Get element with intersection of 'set hass' property
+      const c = component as HTMLElement & { hass?: HassEntities };
+
+      // Set entitie
+      c.hass = entities;
+    }
+  } catch (_err) {
+    /* do nothing here */
+  }
+};
 
 const loadScriptFromUrl = async (url: string): Promise<void> => {
   // If the script is already loaded, return immediately
@@ -55,38 +74,29 @@ export const loadWebComponent = async (name: string, finishedLoading: (hadError:
     // If it has a set config then set config value
     if (el?.setConfig) {
       try {
-        el.setConfig('here you go');
+        // Set the element config
+        el.setConfig('{}');
+
+        // Set the element entities (if they exist)
+        const entities = useAppStore().homeAssistantEntities;
+        if (entities) {
+          setComponentEntities(el, entities);
+        }
       } catch (e) {
         console.error(e);
       }
-    } else {
-      console.warn(`setConfig method not found on <${name}>`);
     }
   } catch (e) {
     console.error(e);
   }
 };
 
-export const updateHassEntities = (container: HTMLElement, entities: HassEntities | undefined): void => {
+export const updateHassEntities = (container: Element, entities: HassEntities | undefined): void => {
   if (entities && container) {
     const cwcComponents = Array.from(container.querySelectorAll('*')).filter((el) => el.tagName.toLowerCase().startsWith(CWC_PREFIX));
 
     cwcComponents.forEach((component) => {
-      try {
-        // Check if the component has the 'set hass' property
-        const proto = Object.getPrototypeOf(component);
-        const hasHassSetter = Object.getOwnPropertyDescriptor(proto, 'hass')?.set !== undefined;
-
-        if (hasHassSetter) {
-          // Get element with intersection of 'set hass' property
-          const c = component as HTMLElement & { hass?: HassEntities };
-
-          // Set entitie
-          c.hass = entities;
-        }
-      } catch (_err) {
-        /* do nothing here */
-      }
+      setComponentEntities(component, entities);
     });
   }
 };
