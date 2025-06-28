@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # e.g. to run this script:
+# HA_TOKEN="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJlOWEwMjI4ODhlZTg0NTI1OGYwNGIyMTcxMjVkMTgyMyIsImlhdCI6MTc1MDUwMzM4NiwiZXhwIjoyMDY1ODYzMzg2fQ.ISXES8h7omKiHAHgm9478wRcZPog-AgKCgNv9L3e1B0" \
 # SSH_USER_NAME="ssh" \
 # SSH_USER_PASSWORD="pwd" \
 # HOSTNAME="automation.wojcik.com.au" \
@@ -25,6 +26,11 @@ fi
 
 if [ -z "$SSH_USER_PASSWORD" ]; then
     echo "Error: SSH_USER_PASSWORD must be defined!"
+    exit 1
+fi
+
+if [ -z "$HA_TOKEN" ]; then
+    echo "Error: HA_TOKEN must be defined!"
     exit 1
 fi
 
@@ -73,6 +79,7 @@ if ! docker image ls --format '{{.Tag}}' | grep -q "^$IMAGE_NAME$"; then
         --build-arg SSH_USER_PASSWORD="$SSH_USER_PASSWORD" \
         --build-arg HOSTNAME="$HOSTNAME" \
         --build-arg TIMEZONE="$TIMEZONE" \
+        --build-arg HA_TOKEN="$HA_TOKEN" \
         .
 else
     echo "Image '$IMAGE_NAME' already exists."
