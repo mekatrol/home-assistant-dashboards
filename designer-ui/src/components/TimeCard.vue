@@ -52,8 +52,8 @@ useIntervalTimer(async () => {
     const nextDawn = sun.attributes['next_dawn'];
     const nextDusk = sun.attributes['next_dusk'];
 
-    sunsetPoint.value = nextDawn ?? '';
-    sunrisePoint.value = nextDusk ?? '';
+    sunrisePoint.value = nextDawn ?? '';
+    sunsetPoint.value = nextDusk ?? '';
   }
 
   // Keep timer running
