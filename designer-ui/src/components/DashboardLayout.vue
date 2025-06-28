@@ -23,6 +23,7 @@
 import { ref, type Component } from 'vue';
 import ToggleSwitch from '@/components/ToggleSwitch.vue';
 import RemoteComponent from '@/components/RemoteWebComponent.vue';
+import TimeCard from '@/components/TimeCard.vue';
 
 interface Props {
   name: string;
@@ -47,7 +48,8 @@ interface Layout {
 
 const componentMap = {
   ToggleSwitch,
-  RemoteComponent
+  RemoteComponent,
+  TimeCard
 } as const;
 
 type ComponentName = keyof typeof componentMap;
@@ -80,15 +82,13 @@ const defaultGridItem = (row: number, column: number): GridItem => {
 const resolvedComponentCache: Record<string, Component> = {};
 const gridItems = ref<GridItem[]>([]);
 
+// gridItems.value[0] = defaultGridItem(1, 1);
+// gridItems.value[0].componentName = 'RemoteComponent';
+// gridItems.value[0].props = { name: 'date-time-web-component' };
+// gridItems.value[0].columnSpan = 4;
 gridItems.value[0] = defaultGridItem(1, 1);
-gridItems.value[0].componentName = 'RemoteComponent';
-gridItems.value[0].props = { name: 'date-time-web-component' };
+gridItems.value[0].componentName = 'TimeCard';
 gridItems.value[0].columnSpan = 4;
-
-gridItems.value[1] = defaultGridItem(3, 1);
-gridItems.value[1].componentName = 'RemoteComponent';
-gridItems.value[1].props = { name: 'date-time-lit-component' };
-gridItems.value[1].columnSpan = 4;
 
 const resolveComponent = (name: string): Component | null => {
   if (resolvedComponentCache[name]) {
