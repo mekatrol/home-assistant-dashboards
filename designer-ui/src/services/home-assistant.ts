@@ -17,7 +17,9 @@ import {
   ERR_CONNECTION_LOST,
   ERR_HASS_HOST_REQUIRED,
   ERR_INVALID_HTTPS_TO_HTTP,
-  type HassEntities
+  type HassEntities,
+  type HassEntity,
+  callService
 } from 'home-assistant-js-websocket';
 import { updateHassEntities } from './web-component';
 
@@ -72,4 +74,19 @@ export const homeAssistantConnect = async (container: HTMLElement): Promise<void
 export const homeAssistantClose = (): void => {
   connection?.close();
   connection = undefined;
+};
+
+export const toggleEntity = async (entity: HassEntity): Promise<void> => {
+  if (!connection) {
+    // Can't toggle entity if not connected
+    return;
+  }
+
+  // Get entity domain and service
+  const domain = entity.entity_id.split('.')[0];
+  const service = entity.state === 'on' ? 'turn_off' : 'turn_on';
+
+  await callService(connection, domain, service, {
+    entity_id: entity.entity_id
+  });
 };

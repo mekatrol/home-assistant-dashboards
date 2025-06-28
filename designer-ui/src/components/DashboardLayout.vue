@@ -21,9 +21,11 @@
 
 <script setup lang="ts">
 import { ref, type Component } from 'vue';
-import ToggleSwitch from '@/components/ToggleSwitch.vue';
+import type { HassEntity } from 'home-assistant-js-websocket';
 import RemoteComponent from '@/components/RemoteWebComponent.vue';
 import TimeCard from '@/components/TimeCard.vue';
+import StatusIconCard from '@/components/cards/StatusIconCard.vue';
+import SwitchCard from '@/components/cards/SwitchCard.vue';
 
 interface Props {
   name: string;
@@ -47,8 +49,9 @@ interface Layout {
 }
 
 const componentMap = {
-  ToggleSwitch,
   RemoteComponent,
+  StatusIconCard,
+  SwitchCard,
   TimeCard
 } as const;
 
@@ -59,8 +62,8 @@ defineProps<Props>();
 const layout: Layout = {
   width: 800,
   height: 480,
-  columns: 4,
-  rows: 4
+  columns: 8,
+  rows: 8
 };
 
 const defaultGridItem = (row: number, column: number): GridItem => {
@@ -82,13 +85,56 @@ const defaultGridItem = (row: number, column: number): GridItem => {
 const resolvedComponentCache: Record<string, Component> = {};
 const gridItems = ref<GridItem[]>([]);
 
+let giIndex = 0;
+
 // gridItems.value[0] = defaultGridItem(1, 1);
 // gridItems.value[0].componentName = 'RemoteComponent';
 // gridItems.value[0].props = { name: 'date-time-web-component' };
 // gridItems.value[0].columnSpan = 4;
-gridItems.value[0] = defaultGridItem(1, 1);
-gridItems.value[0].componentName = 'TimeCard';
-gridItems.value[0].columnSpan = 4;
+gridItems.value[giIndex] = defaultGridItem(1, 2);
+gridItems.value[giIndex].columnSpan = 6;
+gridItems.value[giIndex].rowSpan = 2;
+gridItems.value[giIndex].componentName = 'TimeCard';
+giIndex++;
+
+gridItems.value[giIndex] = defaultGridItem(1, 8);
+gridItems.value[giIndex].rowSpan = 2;
+gridItems.value[giIndex].componentName = 'StatusIconCard';
+gridItems.value[giIndex].props = {
+  entityId: 'sun.sun',
+  iconOff: 'dark_mode',
+  iconOn: 'wb_sunny',
+  colorOn: '#f1e20f',
+  colorOff: '#f7621e',
+  class: 'sun',
+  stateAction: (entity: HassEntity): boolean | undefined => {
+    return entity.state === 'above_horizon';
+  }
+};
+giIndex++;
+
+gridItems.value[giIndex] = defaultGridItem(3, 7);
+gridItems.value[giIndex].columnSpan = 2;
+gridItems.value[giIndex].componentName = 'SwitchCard';
+gridItems.value[giIndex].props = {
+  entityId: 'switch.kitchen_light',
+  iconOff: 'light',
+  iconOn: 'light',
+  colorOn: '#01a301',
+  colorOff: '#838282'
+};
+giIndex++;
+
+gridItems.value[giIndex] = defaultGridItem(3, 1);
+gridItems.value[giIndex].columnSpan = 3;
+gridItems.value[giIndex].componentName = 'SwitchCard';
+gridItems.value[giIndex].props = {
+  entityId: 'switch.clothes_line_light_op',
+  iconOff: 'light',
+  iconOn: 'light',
+  colorOn: '#01a301',
+  colorOff: '#838282'
+};
 
 const resolveComponent = (name: string): Component | null => {
   if (resolvedComponentCache[name]) {
@@ -121,6 +167,8 @@ const container = ref<HTMLDivElement | null>(null);
 <style scoped lang="css">
 .grid {
   display: grid;
+  gap: 10px;
+  overflow: hidden;
 }
 
 .item {
