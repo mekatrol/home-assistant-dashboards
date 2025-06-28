@@ -129,7 +129,7 @@ gridItems.value[giIndex] = defaultGridItem(3, 1);
 gridItems.value[giIndex].columnSpan = 3;
 gridItems.value[giIndex].componentName = 'SwitchCard';
 gridItems.value[giIndex].props = {
-  entityId: 'switch.clothes_line_light_op',
+  entityId: 'switch.clothes_line_light',
   iconOff: 'light',
   iconOn: 'light',
   colorOn: '#01a301',
